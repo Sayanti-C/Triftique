@@ -1,0 +1,72 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const multer = require('multer');
+const path = require('path');
+const cors = require('cors');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(express.json());
+app.use(cors());
+app.use('/uploads', express.static('uploads'));
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log("MongoDB connected"))
+.catch(err => console.log(err));
+
+// Multer Storage Setup
+const storage = multer.diskStorage({
+    destination: './uploads/',
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage });
+
+// Thrift Item Schema
+const ThriftItem = mongoose.model('ThriftItem', new mongoose.Schema({
+    title: String,
+    description: String,
+    price: Number,
+    image: String,
+    condition: String,
+    seller: String,
+    postedDate: { type: Date, default: Date.now }
+}));
+
+// Routes
+app.post('/upload', upload.single('image'), async (req, res) => {
+    try {
+        const { title, description, price, condition, seller } = req.body;
+        const newItem = new ThriftItem({
+            title,
+            description,
+            price,
+            condition,
+            seller,
+            image: req.file ? req.file.path : ''
+        });
+        await newItem.save();
+        res.json({ success: true, message: 'Item uploaded successfully', item: newItem });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+app.get('/items', async (req, res) => {
+    try {
+        const items = await ThriftItem.find();
+        res.json(items);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
