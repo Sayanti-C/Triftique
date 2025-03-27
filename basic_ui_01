@@ -1,0 +1,62 @@
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { MessageSquare, Heart } from "lucide-react";
+
+const products = [
+  { id: 1, name: "Hilton 4 Door Pure Wood Wardrobe", price: "Rs. 8,000", condition: "Great", image: "/wardrobe.jpg" },
+  { id: 2, name: "Magellan Bed Frame", price: "Rs. 1,500", condition: "Good", image: "/bed.jpg" },
+  { id: 3, name: "Metallic Black Mobile", price: "Rs. 6,500", condition: "Great", image: "/mobile.jpg" }
+];
+
+export default function ThriftiqueUI() {
+  const [offerDialog, setOfferDialog] = useState(false);
+  const [chatDialog, setChatDialog] = useState(false);
+  const [offer, setOffer] = useState("");
+
+  return (
+    <div className="p-4 max-w-lg mx-auto">
+      {products.map((product) => (
+        <Card key={product.id} className="mb-4">
+          <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-t-lg" />
+          <CardContent>
+            <h2 className="text-lg font-semibold">{product.name}</h2>
+            <p className="text-gray-600">{product.price}</p>
+            <p className="text-sm text-gray-500">Condition: {product.condition}</p>
+            <div className="flex gap-2 mt-2">
+              <Button onClick={() => setOfferDialog(true)} className="flex-1">Make an Offer</Button>
+              <Button onClick={() => setChatDialog(true)} variant="outline" className="flex-1 flex items-center gap-1">
+                <MessageSquare size={16} /> Chat with Seller
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+      
+      {/* Offer Dialog */}
+      <Dialog open={offerDialog} onOpenChange={setOfferDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Your Offer</DialogTitle>
+          </DialogHeader>
+          <Input value={offer} onChange={(e) => setOffer(e.target.value)} placeholder="Enter Amount in Rs" />
+          <Button onClick={() => setOfferDialog(false)}>Make Offer</Button>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Chat Dialog */}
+      <Dialog open={chatDialog} onOpenChange={setChatDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Chat with Seller</DialogTitle>
+          </DialogHeader>
+          <div className="p-2 bg-gray-100 rounded-lg h-64 overflow-auto">(Chat Messages here)</div>
+          <Input placeholder="Type a message..." />
+          <Button>Send</Button>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
