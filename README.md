@@ -78,6 +78,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 - **Project Lead**: Your Name (your.email@example.com)
 - **GitHub**: [Thriftique](https://github.com/yourusername/thriftique)
-- **Website**: [Thriftique](https://www.thriftique.com) (If applicable)
+- **Website**: [https://thriftstore.netlify.app/) (If applicable)
 
 ---
